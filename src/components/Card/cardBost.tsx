@@ -4,23 +4,65 @@ import { Button, Card, FormControl, InputGroup } from "react-bootstrap";
 import { Trapezoidal } from "../../utils/methods/mathMethods";
 import { restrap } from "../../utils/methods/mathMethods";
 import { CalcDeltaTrape } from "../../utils/methods/mathMethods";
+import Calculate from "../../utils/calcs/calcs";
 
 const CardBost = (props: any) => {
   const [limitsup, setlimitSup] = useState(0);
   const [limitinf, setlimitinf] = useState(0);
   const [iteraciones, setiteraciones] = useState(0);
   const [func, setfunc] = useState("");
+  const [methof, setmethof] = useState(0);
+  
 
-  const [result, setResult] = useState<restrap>({
-    registro: [],
-    resultado: 0,
-  });
+  const [data, setData] = useState([]); 
+  const [area, setarea] = useState(0);
 
-  const [delta, setDelta] = useState(0);
+  const [result, setResult] = useState(
+    { a : 0,
+      b: 0,
+      method : '',
+      func: '',
+      n : 0 
+    }
+  );
 
-  const [visibleTrape, setVisibleTrape] = useState(false);
-  // usestate de una interfa
+  function updateData (a: any,b: any,method: any,func: any,n: any) {
+    let tempdata = { 
+      a : a,
+      b: b,
+      method : method,
+      func: func,
+      n : n 
+    }
+    setResult(tempdata);
+    let area = 0
+    area = Calculate(result).area
+    setarea(area);
+    console.log(Calculate(result));
 
+  }
+
+  function getmethod(){
+    let method = "";
+  
+    if(methof === 1){
+      method = "boole";
+    }
+    if(methof === 2){
+      method = "simpsont";
+    }
+    if(methof === 3){
+      method = "simpsonu";
+    }
+    if(methof === 4){
+      method = "simpsono";
+    }
+
+    return method;
+
+  }
+
+  
   return (
     <>
       <Card>
@@ -29,6 +71,19 @@ const CardBost = (props: any) => {
           <Card.Title>METODO TRAPEZOIDAL</Card.Title>
           <Card.Text>
             <>
+            <InputGroup className="mb-3">
+                <FormControl
+                  value={methof}
+                  type="number"
+                  onChange={(e) => setmethof(parseInt(e.target.value))}
+                  placeholder="Ingrese la funcion"
+                  aria-label="Ingrese la funcion"
+                  aria-describedby="basic-addon2"
+                />
+                <InputGroup.Text id="basic-addon2">
+                  CONFIG
+                </InputGroup.Text>
+              </InputGroup>
               <InputGroup className="mb-3">
                 <FormControl
                   value={func}
@@ -87,37 +142,17 @@ const CardBost = (props: any) => {
             {/* boton para tomar valores de los imput y renderizar en una modal el resultado de la funcion trapezoidal */}
             <Button
               variant="primary"
-              onClick={() => {
-                setVisibleTrape(!visibleTrape);
-                setResult({
-                  registro: Trapezoidal(func, iteraciones, limitsup, limitinf)
-                    .registro,
-                  resultado: Trapezoidal(func, iteraciones, limitsup, limitinf)
-                    .resultado,
-                });
-                setDelta(CalcDeltaTrape(limitsup, limitinf, iteraciones));
-              }}
+              onClick={() => updateData(limitsup,limitinf, getmethod(), func, iteraciones)}
             >
               Calcular
             </Button>
-            { visibleTrape ? (
-              <>
-              <h3> EL DELTA DE ES : {delta} </h3>
-              <h3> EL RESULTADO CALCULADO DE ESTE METODO ES </h3>
-              <ul>{/* //retornar array de trapezoidal */}</ul>
-              {result.registro.map((item: any, i) => (
-                <li>RESULTADO DE LA ITERACION {i} es :  {item*-1}</li>
-              ))}
-              <h3>EL RESULTADO FINAL ES {result.resultado}</h3>
-              <h3> {result.resultado} </h3>
-              </>) : 
-              <>
-              </>
-            }
+            {/* mostrad datos de data */}
+                <h1>AREA : {area}</h1>
           </Card.Text>
         </Card.Body>
       </Card>
     </>
   );
 };
-export { CardBost };
+
+export default CardBost;
