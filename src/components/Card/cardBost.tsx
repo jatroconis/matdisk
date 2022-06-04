@@ -57,6 +57,10 @@ const CardBost = (props: any) => {
     if(methof === 4){
       method = "simpsono";
     }
+    if(methof === 5){
+      method = "trapezoidal";
+    }
+
 
     return method;
 
